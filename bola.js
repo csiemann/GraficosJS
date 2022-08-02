@@ -1,10 +1,55 @@
-var id = "myCanvas";
-var canvas;
-var ctx;
-var Objects = [];
+var AnimationCanvas = function(id, color) {
+    this.id = id;
+    this.objects = [];
+    this.canvas;
+    this.ctx;
+    if(!color)
+        color = "#e25822";
+    this.color = color;
+}
+AnimationCanvas.prototype.run = function(){
+    var r = 5;
+    var v = 2;
+    var q = 200;
+    this.canvas = document.getElementById(this.id);
+    var div = getComputedStyle(document.getElementById("div_"+this.id));
+    this.canvas.width = div.width.slice(0,-2);
+    this.canvas.height = div.height.slice(0,-2);
+    this.ctx = this.canvas.getContext("2d");
+    for(var i = 0;i<q;i++){
+        var posX = randomIntFromRange(r, this.canvas.width-r);
+        var posY = randomIntFromRange(r, this.canvas.height-r);
+        for(var j = 0 ; j < this.objects.length;j++){
+            if(distance(posX,posY,this.objects[j].position.x,this.objects[j].position.y)-r*2<0){
+                posX = randomIntFromRange(r, this.canvas.width-r);
+                posY = randomIntFromRange(r, this.canvas.height-r);
+                j=-1;                
+            }
+        }
+        this.objects.push(new Circle(i,this,{x:posX,y:posY},r,{x : Math.random()*v, y : Math.random()*v},this.color));
+    }
+    this.clear();
+    var me = this;
+    return setInterval(function(){me.update()}, 10);
+}
+AnimationCanvas.prototype.update = function(){
+    this.clear();
+    for(id in this.objects){
+        this.objects[id].update();
+    }
+}
+AnimationCanvas.prototype.clear = function(){
+    this.ctx.fillStyle = "black";
+    this.ctx.beginPath();
+    this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.closePath();
+    this.ctx.fill();
+}
+window['AnimationCanvas'] = AnimationCanvas;
 
 
-var Shape = function(id,position, velocity, color, mass) {
+
+var Shape = function(id, animationCanvas, position, velocity, color, mass) {
     this.position = position;
     this.velocity = velocity;
     if(!mass)
@@ -13,6 +58,7 @@ var Shape = function(id,position, velocity, color, mass) {
     this.color = color;
     this.id = id;
     this.history = [];
+    this.animationCanvas = animationCanvas;
 }
 Shape.prototype.update = function() { }
 Shape.prototype.draw = function() { }
@@ -20,8 +66,8 @@ Shape.prototype.drawHis = function() { }
 
 window['Shape'] = Shape;
 
-var Circle = function(id,position,raio, velocity, color) {
-    Shape.call(this,id, position, velocity, color);
+var Circle = function(id, animationCanvas, position,raio, velocity, color) {
+    Shape.call(this,id, animationCanvas, position, velocity, color);
     this.raio = raio;
 }
 Circle.prototype = Object.create(Shape.prototype);
@@ -31,10 +77,20 @@ window['Circle'] = Circle;
 Circle.prototype.update = function() {
     this.draw();
     this.drawHis();
-    if (this.position.x + this.raio >= canvas.width || this.position.x - this.raio <= 0){
+    if (this.position.x + this.raio >= this.animationCanvas.canvas.width || this.position.x - this.raio <= 0){
+        if(this.position.x + this.raio >= this.animationCanvas.canvas.width){
+            this.position.x = this.animationCanvas.canvas.width - this.raio 
+        }else{
+            this.position.x = this.raio;
+        }
         this.velocity.x = -this.velocity.x;
     }
-    if (this.position.y + this.raio >= canvas.height || this.position.y - this.raio <= 0){
+    if (this.position.y + this.raio >= this.animationCanvas.canvas.height || this.position.y - this.raio <= 0){
+        if(this.position.y + this.raio >= this.animationCanvas.canvas.height){
+            this.position.y = this.animationCanvas.canvas.height-this.raio;
+        }else{
+            this.position.y = this.raio;
+        }
         this.velocity.y = -this.velocity.y;
     }
     this.history.unshift(JSON.parse(JSON.stringify(new Circle(0,this.position,this.raio,{x : 0, y : 0},"#e25822"))));
@@ -43,76 +99,46 @@ Circle.prototype.update = function() {
     this.position.y += this.velocity.y;
 }
 Circle.prototype.draw = function(){
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.raio, 0, 2 * Math.PI);
-    ctx.strokeStyle = this.color;
-    ctx.fillStyle = this.color;
-    ctx.fill();
+    this.animationCanvas.ctx.beginPath();
+    this.animationCanvas.ctx.arc(this.position.x, this.position.y, this.raio, 0, 2 * Math.PI);
+    this.animationCanvas.ctx.strokeStyle = this.color;
+    this.animationCanvas.ctx.globalAlpha = 1;
+    this.animationCanvas.ctx.fillStyle = this.color;
+    this.animationCanvas.ctx.fill();
 }
 Circle.prototype.drawHis = function(){
-    if(this.history.length > 1){
+    if(this.history.length > 10){
         this.history.pop();
     }
     var o = 1;
     for(var i = 0; i < this.history.length;i++){
-        ctx.beginPath();
-        ctx.arc(this.history[i].position.x, this.history[i].position.y, this.history[i].raio, 0, 2 * Math.PI);
-        ctx.strokeStyle = this.history[i].color;
-        ctx.fillStyle = this.history[i].color;
-        ctx.globalAlpha = o;
-        ctx.fill();
-        o -= 1/1;
+        this.animationCanvas.ctx.beginPath();
+        this.animationCanvas.ctx.arc(this.history[i].position.x, this.history[i].position.y, this.history[i].raio, 0, 2 * Math.PI);
+        this.animationCanvas.ctx.strokeStyle = this.history[i].color;
+        this.animationCanvas.ctx.fillStyle = this.history[i].color;
+        this.animationCanvas.ctx.globalAlpha = o;
+        this.animationCanvas.ctx.fill();
+        o = Math.max(0,o-1/this.history.length);
     }
 }
 Circle.prototype.hasCollide = function() {
-    for(var i = 0; i < Objects.length; i++){
-        var obj = Objects[i];
+    for(var i = 0; i < this.animationCanvas.objects.length; i++){
+        var obj = this.animationCanvas.objects[i];
         if(obj === this.id) continue; 
         if (distance(this.position.x,this.position.y,obj.position.x,obj.position.y)-this.raio*2<0){
-            resolveCollision(this, Objects[i]);
+            resolveCollision(this, this.animationCanvas.objects[i]);
         } 
     }
 }
 
-function clear(){
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.rect(0, 0, canvas.width, canvas.height);
-    ctx.closePath();
-    ctx.fill();
-}
+/** RUN */
 
-function run(id){
-    var r = 10;
-    var v = 1;
-    var q = 1000;
-    
-    canvas = document.getElementById("myCanvas");
-    ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth-16;
-    canvas.height = window.innerHeight-16;
-    for(var i = 0;i<q;i++){
-        var posX = randomIntFromRange(r, canvas.width-r);
-        var posY = randomIntFromRange(r, canvas.height-r);
-        for(var j = 0 ; j < Objects.length;j++){
-            if(distance(posX,posY,Objects[j].position.x,Objects[j].position.y)-r*2<0){
-                posX = randomIntFromRange(r, canvas.width-r);
-                posY = randomIntFromRange(r, canvas.height-r);
-                j=-1;                
-            }
-        }
-        Objects.push(new Circle(i,{x:posX,y:posY},r,{x : Math.random()*v, y : Math.random()*v},"#e25822"));
-    }
-    clear();
-    return setInterval(update, 10);
-}
-function update(){
-    clear();
-    for(id in Objects){
-        Objects[id].update();
-    }
-}
-run(id);
+new AnimationCanvas("bolas", "#e25822").run();
+new AnimationCanvas("bolas1", "#beeeed").run();
+new AnimationCanvas("bolas2", "#6a39bc").run();
+new AnimationCanvas("bolas3", "#664141").run();
+
+/* UTILS */
 
 function distance(x1, y1, x2, y2) {
     const xDist = x2 - x1

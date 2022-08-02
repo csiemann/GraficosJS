@@ -2,17 +2,48 @@
 <html>
     <head>
         <style>
+            html{
+                height: 98%;
+            }
             body{
                 overflow: hidden;
+                height: 100%;
+            }
+            .row{
+                display: flex;
+                flex-direction: row;
+                height: 50%;
+            }
+            .collumn{
+                border: 1px solid #646464;
             }
         </style>
     </head>
 <body>
-    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #d3d3d3;">
-        Your browser does not support the HTML canvas tag.</canvas>
-        
-    </canvas>
-
+        <div class="row">
+            <div id="div_bolas" class="collumn" style="flex: 1;">
+                <canvas id="bolas" width="300" height="300" style="">
+                    Your browser does not support the HTML canvas tag.</canvas>
+                </canvas>
+            </div>
+            <div id="div_bolas1" class="collumn" style="flex: 1;">
+                <canvas id="bolas1" width="300" height="300" style="">
+                    Your browser does not support the HTML canvas tag.</canvas>
+                </canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div id="div_bolas2" class="collumn" style="flex: 1;">
+                <canvas id="bolas2" width="300" height="300" style="">
+                    Your browser does not support the HTML canvas tag.</canvas>
+                </canvas>
+            </div>
+            <div id="div_bolas3" class="collumn" style="flex: 1;">
+                <canvas id="bolas3" width="300" height="300" style="">
+                    Your browser does not support the HTML canvas tag.</canvas>
+                </canvas>
+            </div>
+        </div>
     <script src="bola.js"></script>
 </body>
 </html>
