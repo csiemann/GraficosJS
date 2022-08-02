@@ -1,4 +1,4 @@
-var AnimationCanvas = function(id, color) {
+var AnimationCanvas = function(id, color,fps) {
     this.id = id;
     this.objects = [];
     this.canvas;
@@ -6,6 +6,8 @@ var AnimationCanvas = function(id, color) {
     if(!color)
         color = "#e25822";
     this.color = color;
+    // this.fps = fps;
+    this.tick = 10;
 }
 AnimationCanvas.prototype.run = function(){
     var r = 5;
@@ -30,7 +32,7 @@ AnimationCanvas.prototype.run = function(){
     }
     this.clear();
     var me = this;
-    return setInterval(function(){me.update()}, 10);
+    return setInterval(function(){me.update()}, this.tick);
 }
 AnimationCanvas.prototype.update = function(){
     this.clear();
