@@ -14,37 +14,43 @@
                 flex-direction: row;
                 height: 50%;
             }
+            .grid{
+                display: contents;
+            }
             .collumn{
-                border: 1px solid #646464;
+                border: 1px solid rgb(100, 100, 100);
             }
         </style>
     </head>
 <body>
+    <div class ="grid">
         <div class="row">
             <div id="div_bolas" class="collumn" style="flex: 1;">
-                <canvas id="bolas" width="300" height="300" style="">
-                    Your browser does not support the HTML canvas tag.</canvas>
+                <canvas id="bolas" width="300" height="300">
+                    Your browser does not support the HTML canvas tag.
                 </canvas>
             </div>
             <div id="div_bolas1" class="collumn" style="flex: 1;">
-                <canvas id="bolas1" width="300" height="300" style="">
-                    Your browser does not support the HTML canvas tag.</canvas>
+                <canvas id="bolas1" width="300" height="300">
+                    Your browser does not support the HTML canvas tag.
                 </canvas>
             </div>
         </div>
         <div class="row">
             <div id="div_bolas2" class="collumn" style="flex: 1;">
-                <canvas id="bolas2" width="300" height="300" style="">
-                    Your browser does not support the HTML canvas tag.</canvas>
+                <canvas id="bolas2" width="300" height="300">
+                    Your browser does not support the HTML canvas tag.
                 </canvas>
             </div>
             <div id="div_bolas3" class="collumn" style="flex: 1;">
-                <canvas id="bolas3" width="300" height="300" style="">
-                    Your browser does not support the HTML canvas tag.</canvas>
+                <canvas id="bolas3" width="300" height="300">
+                    Your browser does not support the HTML canvas tag.
                 </canvas>
             </div>
         </div>
+    </div>
         <script src="scripts/AnimationCanvas.js"></script>
+        <script src="scripts/Grid.js"></script>
         <script src="scripts/Shapes.js"></script>
         <script src="scripts/Utils.js"></script>
         <script>
