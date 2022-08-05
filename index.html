@@ -12,53 +12,35 @@
             .row{
                 display: flex;
                 flex-direction: row;
-                height: 50%;
+                flex: 1;
             }
             .grid{
-                display: contents;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
             }
-            .collumn{
+            .column{
                 border: 1px solid rgb(100, 100, 100);
+                flex: 1;
+            }
+            .cell{
+                height: 100%;
+                width: 100%;
             }
         </style>
     </head>
-<body>
-    <div class ="grid">
-        <div class="row">
-            <div id="div_bolas" class="collumn" style="flex: 1;">
-                <canvas id="bolas" width="300" height="300">
-                    Your browser does not support the HTML canvas tag.
-                </canvas>
-            </div>
-            <div id="div_bolas1" class="collumn" style="flex: 1;">
-                <canvas id="bolas1" width="300" height="300">
-                    Your browser does not support the HTML canvas tag.
-                </canvas>
-            </div>
-        </div>
-        <div class="row">
-            <div id="div_bolas2" class="collumn" style="flex: 1;">
-                <canvas id="bolas2" width="300" height="300">
-                    Your browser does not support the HTML canvas tag.
-                </canvas>
-            </div>
-            <div id="div_bolas3" class="collumn" style="flex: 1;">
-                <canvas id="bolas3" width="300" height="300">
-                    Your browser does not support the HTML canvas tag.
-                </canvas>
-            </div>
-        </div>
-    </div>
+    <body>
         <script src="scripts/AnimationCanvas.js"></script>
         <script src="scripts/Grid.js"></script>
         <script src="scripts/Shapes.js"></script>
         <script src="scripts/Utils.js"></script>
         <script>
             /** RUN */
-            new AnimationCanvas("bolas", "#e25822").run();
-            new AnimationCanvas("bolas1", "#beeeed").run();
-            new AnimationCanvas("bolas2", "#6a39bc").run();
-            new AnimationCanvas("bolas3", "#664141").run();
+            new Grid(document.body, 2, 3);
+            new AnimationCanvas("cell-0-0", "#e25822");
+            // new AnimationCanvas("cell-0-1", "#beeeed");
+            // new AnimationCanvas("cell-1-0", "#6a39bc");
+            // new AnimationCanvas("cell-1-1", "#664141");
         </script>
-</body>
+    </body>
 </html>

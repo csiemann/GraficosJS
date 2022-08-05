@@ -8,18 +8,23 @@ var AnimationCanvas = function(id, color,fps) {
     this.color = color;
     // this.fps = fps;
     this.tick = 10;
+    this.init()
+}
+AnimationCanvas.prototype.init = function(){
+    var div = document.getElementById(this.id);
+    this.canvas = document.createElement("canvas");
+    var style = getComputedStyle(div);
+    this.canvas.style.width = style.width;
+    this.canvas.style.height = style.height;
+    this.canvas.width = style.width;
+    this.canvas.height = style.height;
+    this.ctx = this.canvas.getContext("2d");
+    div.appendChild(this.canvas);
 }
 AnimationCanvas.prototype.run = function(){
     var r = 10;
     var v = 1;
     var q = 100;
-    this.canvas = document.getElementById(this.id);
-    var div = getComputedStyle(document.getElementById("div_"+this.id));
-    this.canvas.width = parseFloat(div.width);
-    this.canvas.height = parseFloat(div.height);
-    this.canvas.style.width = div.width;
-    this.canvas.style.height = div.height;
-    this.ctx = this.canvas.getContext("2d");
     var posX = randomIntFromRange(r, this.canvas.width-r);
     var posY = randomIntFromRange(r, this.canvas.height-r);
     this.objects.push(new Circle(0,this,{x:posX,y:posY},1,{x : Math.random()*v, y : Math.random()*v},"rgba(255,255,255,1)", 1, 100));
